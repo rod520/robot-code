@@ -98,11 +98,24 @@ lemlib::Chassis chassis(drivetrain,
  * to keep execution time for this mode under a few seconds.
  */
 void initialize() {
-	
+	chassis.calibrate();
 	pros::lcd::initialize();
 	pros::lcd::set_text(1, "this is our robot code");
 
 	pros::lcd::register_btn1_cb(on_center_button);
+
+	pros::Task screenTask([&]() {
+        while (true) {
+            // print robot location to the brain screen
+            pros::lcd::print(0, "X: %f", chassis.getPose().x); // x
+            pros::lcd::print(1, "Y: %f", chassis.getPose().y); // y
+            pros::lcd::print(2, "Theta: %f", chassis.getPose().theta); // heading
+            // log position telemetry
+            lemlib::telemetrySink()->info("Chassis pose: {}", chassis.getPose());
+            // delay to save resources
+            pros::delay(50);
+        }
+    });
 }
 
 /**
@@ -134,7 +147,35 @@ void competition_initialize() {}
  * will be stopped. Re-enabling the robot will restart the task, not re-start it
  * from where it left off.
  */
+
+// our starting spot: as viewed from the side of the arena right of your side
+#define STARTX -46
+#define STARTY -6.5
+#define STARTTHETA 90
+
+// These are the y values for the goals, but also the block dispensers. 
+
+#define CLOSEGOALY -47.412
+
+#define FARGOALY +47.412
+
+
+/* more variable templates if we need it.
+#define STARTX -46
+#define STARTY -6.5
+#define STARTTHETA 90
+
+#define STARTX -46
+#define STARTY -6.5
+#define STARTTHETA 90
+*/ 
+
 void autonomous() {}
+    chassis.setPose(STARTX, STARTY, STARTTHETA);
+
+    // for pid tuning, later 
+// chassis.turnToHeading(90, 100000);
+
 
 /**
  * Runs the operator control code. This function will be started in its own task
