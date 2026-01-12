@@ -3,6 +3,19 @@
 #include "pros/misc.h"
 #include "pros/motor_group.hpp"
 
+
+
+
+#define STARTX -62
+#define STARTY -15
+#define STARTTHETA 90
+
+// These are the y values for the goals, but also the block dispensers. 
+// should be calibrated
+
+#define CLOSEGOALY -47
+
+#define FARGOALY 47
 /**
  * A callback function for LLEMU's center button.
  *
@@ -28,7 +41,7 @@ pros::MotorGroup right_motor_group({-2}, pros::MotorGears::blue);
 pros::Motor belt(3, pros::v5::MotorGears::green, pros::v5::MotorUnits::degrees);
 pros::Motor intake(4, pros::v5::MotorGears::green, pros::v5::MotorUnits::degrees);
 
-lemlib::Drivetrain drivetrain(&left_motor_group, &right_motor_group, 9.25, 4.01, 360, 2);
+lemlib::Drivetrain drivetrain(&left_motor_group, &right_motor_group, 9.25, 4.01, 200, 8);
 
 pros::Imu imu(10);	
 
@@ -47,9 +60,9 @@ lemlib::ControllerSettings lateral_controller(10, // proportional gain (kP)
 );
 
 // angular PID controller
-lemlib::ControllerSettings angular_controller(2, // proportional gain (kP)
+lemlib::ControllerSettings angular_controller(50, // proportional gain (kP)
                                               0, // integral gain (kI)
-                                              10, // derivative gain (kD)
+                                              500, // derivative gain (kD)
                                               3, // anti windup
                                               1, // small error range, in degrees
                                               100, // small error range timeout, in milliseconds
@@ -101,6 +114,8 @@ void initialize() {
 	chassis.calibrate();
 	pros::lcd::initialize();
 	pros::lcd::set_text(1, "this is our robot code");
+	chassis.setPose(STARTX, STARTY, STARTTHETA);
+
 
 	pros::lcd::register_btn1_cb(on_center_button);
 
@@ -110,6 +125,9 @@ void initialize() {
             pros::lcd::print(0, "X: %f", chassis.getPose().x); // x
             pros::lcd::print(1, "Y: %f", chassis.getPose().y); // y
             pros::lcd::print(2, "Theta: %f", chassis.getPose().theta); // heading
+
+			pros::lcd::print(3, "left wheel: %f", left_motor_group.get_position());
+			pros::lcd::print(4, "right wheel: %f", right_motor_group.get_position());
             // log position telemetry
             lemlib::telemetrySink()->info("Chassis pose: {}", chassis.getPose());
             // delay to save resources
@@ -149,15 +167,7 @@ void competition_initialize() {}
  */
 
 // our starting spot: as viewed from the side of the arena right of your side
-#define STARTX -46
-#define STARTY -6.5
-#define STARTTHETA 90
 
-// These are the y values for the goals, but also the block dispensers. 
-
-#define CLOSEGOALY -47.412
-
-#define FARGOALY +47.412
 
 
 /* more variable templates if we need it.
@@ -170,9 +180,12 @@ void competition_initialize() {}
 #define STARTTHETA 90
 */ 
 
-void autonomous() {}
+void autonomous() {
     chassis.setPose(STARTX, STARTY, STARTTHETA);
+    chassis.turnToHeading(0, 100000);
 
+
+}
     // for pid tuning, later 
 // chassis.turnToHeading(90, 100000);
 
