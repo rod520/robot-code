@@ -185,9 +185,41 @@ void autonomous() {
     chassis.turnToHeading(0, 100000);
 
 
+	// this is gonna be the autonomous code
+	// delete/replace the // before the /* to comment the whole thing
+	// /*
+	// there should probably be an intermediate point here
+	// chassis.moveToPoint( ??? );
+	//negative 48 is an intermediate between the 
+	chassis.moveToPose(-48, CLOSEGOALY, 270, 4000);
+	
+	// this true needs to be replaced with code for the bumper
+	// the idea is the bot moves toward the dispenser at a constant speed until it detects a block
+	while(true){
+		chassis.arcade(30, // really slow forward speed forward
+                       0, // straight forward
+                       false, // enable drive curves
+                       0.75 // slightly prioritize steering
+        );
+		intake.move(-60);
+			//intake intake
+		belt.move(50);
+			// belt intake
+	}
+	intake.brake();
+	belt.brake();
+	// move back the other way
+	chassis.moveToPose(-48, CLOSEGOALY, 90, 4000);
+	// and output the block
+
+	belt.move_velocity(-63); //start belt
+    pros::delay(2000);       // edit this time so it stops when the block is output
+	belt.brake();
+	// repeat all over again???
+
+// */
 }
-    // for pid tuning, later 
-// chassis.turnToHeading(90, 100000);
+ 
 
 
 /**
