@@ -212,12 +212,13 @@ void opcontrol() {
 		
 		
 		if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_L1)) {
-			belt.move(50);
-			//intake belt
-		}
-		else if	(controller.get_digital(pros::E_CONTROLLER_DIGITAL_R1)) {
 			belt.move(-50);
 			//outtake belt
+			
+		}
+		else if	(controller.get_digital(pros::E_CONTROLLER_DIGITAL_R1)) {
+			belt.move(50);
+			//intake belt
 		}
 		else{
 			belt.brake();
