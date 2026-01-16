@@ -186,7 +186,7 @@ void autonomous() {
 	while (chassis.isInMotion()){
 		pros::delay(10);
 	}
-	chassis.moveToPoint(CLOSEGOALX, -48, 4000);
+	chassis.moveToPoint(LEFTGOALX, -48, 4000);
 
 
 }
