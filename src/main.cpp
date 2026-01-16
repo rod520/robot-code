@@ -6,16 +6,16 @@
 
 
 
-#define STARTX -62
-#define STARTY -15
+#define STARTX -12
+#define STARTY -59
 #define STARTTHETA 90
 
-// These are the y values for the goals, but also the block dispensers. 
+// These are the x values for the goals, but also the block dispensers. 
 // should be calibrated
 
-#define CLOSEGOALY -47
+#define LEFTGOALX -47
 
-#define FARGOALY 47
+#define LEFTGOALY 47
 /**
  * A callback function for LLEMU's center button.
  *
@@ -48,27 +48,27 @@ pros::Imu imu(10);
 lemlib::OdomSensors sensors(nullptr, nullptr, nullptr, nullptr, &imu);
 
 // lateral PID controller
-lemlib::ControllerSettings lateral_controller(10, // proportional gain (kP)
+lemlib::ControllerSettings lateral_controller(20, // proportional gain (kP)
                                               0, // integral gain (kI)
-                                              3, // derivative gain (kD)
+                                              10, // derivative gain (kD)
                                               3, // anti windup
                                               1, // small error range, in inches
                                               100, // small error range timeout, in milliseconds
                                               3, // large error range, in inches
                                               500, // large error range timeout, in milliseconds
-                                              20 // maximum acceleration (slew)
+                                              3 // maximum acceleration (slew)
 );
 
 // angular PID controller
-lemlib::ControllerSettings angular_controller(50, // proportional gain (kP)
+lemlib::ControllerSettings angular_controller(30, // proportional gain (kP)
                                               0, // integral gain (kI)
-                                              500, // derivative gain (kD)
+                                              100, // derivative gain (kD)
                                               3, // anti windup
                                               1, // small error range, in degrees
                                               100, // small error range timeout, in milliseconds
                                               3, // large error range, in degrees
                                               500, // large error range timeout, in milliseconds
-                                              0 // maximum acceleration (slew)
+                                              10 // maximum acceleration (slew)
 );
 
 
@@ -182,7 +182,11 @@ void competition_initialize() {}
 
 void autonomous() {
     chassis.setPose(STARTX, STARTY, STARTTHETA);
-    chassis.turnToHeading(0, 100000);
+    chassis.moveToPoint(-24, -50, 4000);
+	while (chassis.isInMotion()){
+		pros::delay(10);
+	}
+	chassis.moveToPoint(CLOSEGOALX, -48, 4000);
 
 
 }
@@ -212,12 +216,12 @@ void opcontrol() {
 		
 		
 		if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_L1)) {
-			belt.move(-50);
+			belt.move(-130);
 			//outtake belt
 			
 		}
 		else if	(controller.get_digital(pros::E_CONTROLLER_DIGITAL_R1)) {
-			belt.move(50);
+			belt.move(130);
 			//intake belt
 		}
 		else{
