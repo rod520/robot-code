@@ -5,25 +5,17 @@
 
 
 
-// our starting spot: left of the parking zone, at heading 270 (looking left)
 
-#define STARTX -10
-#define STARTY -63
-#define STARTTHETA 270
-
-
-/*
-#define STARTX 0
-#define STARTY -48
-#define STARTTHETA 270
-*/
+#define STARTX -12
+#define STARTY -59
+#define STARTTHETA 90
 
 // These are the x values for the goals, but also the block dispensers. 
 // should be calibrated
 
-#define LEFTGOALX -48
+#define LEFTGOALX -47
 
-#define RIGHTGOALX 48
+#define LEFTGOALY 47
 /**
  * A callback function for LLEMU's center button.
  *
@@ -105,6 +97,13 @@ lemlib::Chassis chassis(drivetrain,
 );
 
 
+
+
+
+
+
+
+
 /**
  * Runs initialization code. This occurs as soon as the program is started.
  *
@@ -126,13 +125,15 @@ void initialize() {
             pros::lcd::print(0, "X: %f", chassis.getPose().x); // x
             pros::lcd::print(1, "Y: %f", chassis.getPose().y); // y
             pros::lcd::print(2, "Theta: %f", chassis.getPose().theta); // heading
+
+			pros::lcd::print(3, "left wheel: %f", left_motor_group.get_position());
+			pros::lcd::print(4, "right wheel: %f", right_motor_group.get_position());
             // log position telemetry
             lemlib::telemetrySink()->info("Chassis pose: {}", chassis.getPose());
             // delay to save resources
             pros::delay(50);
         }
     });
-	autonomous();
 }
 
 /**
@@ -165,20 +166,29 @@ void competition_initialize() {}
  * from where it left off.
  */
 
+// our starting spot: as viewed from the side of the arena right of your side
+
+
+
+/* more variable templates if we need it.
+#define STARTX -46
+#define STARTY -6.5
+#define STARTTHETA 90
+
+#define STARTX -46
+#define STARTY -6.5
+#define STARTTHETA 90
+*/ 
 
 void autonomous() {
     chassis.setPose(STARTX, STARTY, STARTTHETA);
-	
-    chassis.moveToPose(LEFTGOALX, -56, 180, 5000);
-	
+    chassis.moveToPoint(-24, -50, 4000);
 	while (chassis.isInMotion()){
 		pros::delay(10);
 	}
-	// */
-	//chassis.moveToPose(LEFTGOALX, -56, 180, 5000);
- 
-	//chassis.moveToPose(LEFTGOALX, -48, 180, 4000);
-	//chassis.moveToPoint(LEFTGOALX, -56, 3000);
+	chassis.moveToPoint(LEFTGOALX, -48, 4000);
+
+
 }
     // for pid tuning, later 
 // chassis.turnToHeading(90, 100000);
