@@ -3,8 +3,6 @@
 #include "pros/misc.h"
 #include "pros/motor_group.hpp"
 
-
-
 // our starting spot: left of the parking zone, at heading 270 (looking left)
 
 #define STARTX -10
@@ -42,8 +40,8 @@ void on_center_button() {
 
 
 // *** our robot configuration ***
-pros::MotorGroup left_motor_group({1}, pros::MotorGears::blue);
-pros::MotorGroup right_motor_group({-2}, pros::MotorGears::blue);
+pros::MotorGroup left_motor_group({1}, pros::MotorGears::green);
+pros::MotorGroup right_motor_group({-2}, pros::MotorGears::green);
 
 // our belt and intake:
 pros::Motor belt(3, pros::v5::MotorGears::green, pros::v5::MotorUnits::degrees);
@@ -151,7 +149,9 @@ void disabled() {}
  * This task will exit when the robot is enabled and autonomous or opcontrol
  * starts.
  */
-void competition_initialize() {}
+void competition_initialize() {
+	
+}
 
 /**
  * Runs the user autonomous code. This function will be started in its own task
@@ -174,11 +174,35 @@ void autonomous() {
 	while (chassis.isInMotion()){
 		pros::delay(10);
 	}
-	// */
-	//chassis.moveToPose(LEFTGOALX, -56, 180, 5000);
- 
-	//chassis.moveToPose(LEFTGOALX, -48, 180, 4000);
-	//chassis.moveToPoint(LEFTGOALX, -56, 3000);
+	
+	// added on sunday
+	auto start_time = pros::millis();
+	int timer_duration = 3000;
+	
+	// new code from sunday
+	while (pros::millis() - start_time < timer_duration) {
+		pros::delay(10);
+		intake.move_velocity(100);
+		belt.move_velocity(75);
+	};
+	intake.brake();
+	belt.brake();
+	//chassis.moveToPose(-48, -48, 90, 5000);
+	//chassis.moveToPoint(11.27, 135.8, 10);
+	
+	
+	// replace -24 with found value to output in long goal
+	chassis.moveToPose(LEFTGOALX, -24, 180, 4000, {.forwards = false});
+	while (chassis.isInMotion()){
+		pros::delay(10);
+	}
+
+	start_time = pros::millis();
+	timer_duration = 3000;
+	while (pros::millis() - start_time < timer_duration) {
+		pros::delay(10);
+		belt.move_velocity(-75);
+	};
 }
     // for pid tuning, later 
 // chassis.turnToHeading(90, 100000);
@@ -218,11 +242,11 @@ void opcontrol() {
 			belt.brake();
 		}
 		if	(controller.get_digital(pros::E_CONTROLLER_DIGITAL_L2)){
-			intake.move(60);
+			intake.move(90);
 			// outtake intake
 		}
 		else if	(controller.get_digital(pros::E_CONTROLLER_DIGITAL_R2)){
-			intake.move(-60);
+			intake.move(-90);
 			//intake intake
 		}
 		else{
