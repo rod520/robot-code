@@ -42,8 +42,8 @@ void on_center_button() {
 
 
 // *** our robot configuration ***
-pros::MotorGroup left_motor_group({1}, pros::MotorGears::blue);
-pros::MotorGroup right_motor_group({-2}, pros::MotorGears::blue);
+pros::MotorGroup left_motor_group({1}, pros::MotorGears::green);
+pros::MotorGroup right_motor_group({-2}, pros::MotorGears::green);
 
 // our belt and intake:
 pros::Motor belt(3, pros::v5::MotorGears::green, pros::v5::MotorUnits::degrees);
